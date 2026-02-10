@@ -20,8 +20,9 @@ const app = express();
 
 // CORS - Permitir peticiones desde el frontend
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://park-sync.netlify.app',
-  credentials: true
+  origin: 'true', // Permitir todas las fuentes (puede ser restringido a dominios específicos)
+  credentials: true 
+  
 }));
 
 // Parser de JSON
