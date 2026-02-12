@@ -19,10 +19,26 @@ const app = express();
 // ============================================
 
 // CORS - Permitir peticiones desde el frontend
+const allowedOrigins = [
+  'https://park-sync.netlify.app',
+  'http://localhost:5173',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 app.use(cors({
-  origin: 'true', // Permitir todas las fuentes (puede ser restringido a dominios específicos)
-  credentials: true 
-  
+  origin: function (origin, callback) {
+    // Permitir peticiones sin origin (como aplicaciones móviles o curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Parser de JSON
