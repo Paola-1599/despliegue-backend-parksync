@@ -305,7 +305,7 @@ const listarUsuarios = async (req, res) => {
 const actualizarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, correo, rol, activo, tipo_documento, numero_documento } = req.body;
+    const { nombre, correo, rol, activo, tipo_documento, numero_documento, contrasena } = req.body;
 
     if (!nombre || !correo || !rol) {
       return res.status(400).json({
@@ -325,6 +325,17 @@ const actualizarUsuario = async (req, res) => {
 
     // Actualizar usuario
     await Usuario.actualizar(id, { nombre, correo, rol, activo, tipo_documento, numero_documento });
+
+    // Actualizar contraseña solo si se envía
+    if (contrasena && contrasena.trim()) {
+      if (contrasena.trim().length < 6) {
+        return res.status(400).json({
+          exito: false,
+          mensaje: 'La contraseña debe tener al menos 6 caracteres'
+        });
+      }
+      await Usuario.actualizarContrasena(id, contrasena.trim());
+    }
 
     res.status(200).json({
       exito: true,
